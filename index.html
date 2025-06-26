@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Timer</title>
+
+<style>
+
+body {
+
+margin: 0;
+
+font-family: 'Arial', sans-serif;
+
+background-color: #F6FBFD; /* 매우 연한 하늘색 배경 */
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+height: 100vh;
+
+}
+
+
+.timer-container {
+
+background-color: #DFF5F9; /* 연한 파스텔톤 하늘색 */
+
+width: 400px;
+
+padding: 30px;
+
+border-radius: 20px;
+
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 살짝 가벼운 음영 */
+
+text-align: center;
+
+}
+
+
+.display {
+
+font-size: 64px;
+
+color: #006064; /* 연한 색상 톤과 어울리는 파란색 */
+
+font-weight: bold;
+
+background: #F6FBFD; /* 디스플레이 배경: 매우 연한 하늘색 톤 */
+
+border: 2px solid #DFF5F9;
+
+border-radius: 15px;
+
+padding: 10px 20px;
+
+margin-bottom: 20px;
+
+display: inline-block;
+
+min-width: 200px;
+
+animation: fadeIn 1.5s ease;
+
+}
+
+
+@keyframes fadeIn {
+
+0% {
+
+opacity: 0;
+
+transform: translateY(-20px);
+
+}
+
+100% {
+
+opacity: 1;
+
+transform: translateY(0);
+
+}
+
+}
+
+
+input {
+
+font-size: 18px;
+
+padding: 10px;
+
+width: 60px;
+
+margin: 0 5px;
+
+border: 1px solid #B2EBF2; /* 입력창 보더 컬러 */
+
+border-radius: 8px;
+
+text-align: center;
+
+background-color: #F6FBFD; /* 입력창 배경색 */
+
+color: #006064; /* 텍스트 색상 */
+
+}
+
+
+button {
+
+font-size: 18px;
+
+margin-top: 10px;
+
+padding: 12px 24px;
+
+border: none;
+
+border-radius: 10px;
+
+background-color: #00796B;
+
+color: white;
+
+cursor: pointer;
+
+transition: background 0.3s ease;
+
+}
+
+
+button:hover {
+
+background-color: #00897B; /* 버튼 호버 색상 */
+
+}
+
+
+button:disabled {
+
+background-color: #B0BEC5; /* 비활성화 버튼 */
+
+cursor: not-allowed;
+
+}
+
+
+.controls {
+
+margin-top: 20px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="timer-container">
+
+<div class="display" id="timer-display">00:00</div>
+
+<div>
+
+<input type="number" id="minutes" placeholder="Min" min="0">
+
+<input type="number" id="seconds" placeholder="Sec" min="0" max="59">
+
+</div>
+
+<div class="controls">
+
+<button id="start-btn">Start</button>
+
+<button id="stop-btn" disabled>Stop</button>
+
+<button id="reset-btn">Reset</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+let timerInterval;
+
+let remainingTime = 0;
+
+
+const display = document.getElementById('timer-display');
+
+const startBtn = document.getElementById('start-btn');
+
+const stopBtn = document.getElementById('stop-btn');
+
+const resetBtn = document.getElementById('reset-btn');
+
+const minutesInput = document.getElementById('minutes');
+
+const secondsInput = document.getElementById('seconds');
+
+
+// 시간을 형식에 맞게 변환 (00:00)
+
+function formatTime(seconds) {
+
+const min = String(Math.floor(seconds / 60)).padStart(2, '0');
+
+const sec = String(seconds % 60).padStart(2, '0');
+
+return `${min}:${sec}`;
+
+}
+
+
+// 화면에 남은 시간 업데이트
+
+function updateDisplay() {
+
+display.textContent = formatTime(remainingTime);
+
+}
+
+
+// 타이머 시작
+
+function startTimer() {
+
+const minutes = parseInt(minutesInput.value) || 0;
+
+const seconds = parseInt(secondsInput.value) || 0;
+
+
+if (minutes === 0 && seconds === 0 && remainingTime === 0) {
+
+alert('Please enter a valid time.');
+
+return;
+
+}
+
+
+remainingTime = remainingTime || minutes * 60 + seconds;
+
+
+timerInterval = setInterval(() => {
+
+if (remainingTime <= 0) {
+
+clearInterval(timerInterval);
+
+alert('Time is up!');
+
+startBtn.disabled = false;
+
+stopBtn.disabled = true;
+
+return;
+
+}
+
+remainingTime--;
+
+updateDisplay();
+
+}, 1000);
+
+
+startBtn.disabled = true;
+
+stopBtn.disabled = false;
+
+}
+
+
+// 타이머 정지
+
+function stopTimer() {
+
+clearInterval(timerInterval);
+
+startBtn.disabled = false;
+
+stopBtn.disabled = true;
+
+}
+
+
+// 타이머 초기화
+
+function resetTimer() {
+
+stopTimer();
+
+remainingTime = 0;
+
+minutesInput.value = '';
+
+secondsInput.value = '';
+
+updateDisplay();
+
+}
+
+
+// 버튼 이벤트 연결
+
+startBtn.addEventListener('click', startTimer);
+
+stopBtn.addEventListener('click', stopTimer);
+
+resetBtn.addEventListener('click', resetTimer);
+
+
+// 초기 화면
+
+updateDisplay();
+
+</script>
+
+</body>
+
+</html>
